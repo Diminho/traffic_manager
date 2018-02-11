@@ -58,7 +58,6 @@ func circlePool(circle chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for car := range circle {
 		carDistribution(car)
-
 	}
 }
 
@@ -68,6 +67,7 @@ func DrivingForNSecs(nSecs int) {
 
 func carDistribution(car int) {
 	switch car {
+	// cases represents the exit number
 	case 1:
 		{
 			DrivingForNSecs(1)
