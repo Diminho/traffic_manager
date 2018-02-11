@@ -158,32 +158,27 @@ func inputRoad4(circle chan int, wg *sync.WaitGroup) {
 
 func outputRoad1(wg *sync.WaitGroup) {
 	defer wg.Done()
-	for car := range ouputRoad1ch {
-		fmt.Println(fmt.Sprintf("Car [%d] drove ouf first exit", car))
-		time.Sleep(time.Duration(random.Intn(5)) * time.Second)
-	}
+	iterateOverOutput(ouputRoad1ch, time.Duration(random.Intn(5))*time.Second)
 }
 
 func outputRoad2(wg *sync.WaitGroup) {
 	defer wg.Done()
-	for car := range ouputRoad2ch {
-		fmt.Println(fmt.Sprintf("Car [%d] drove ouf second exit", car))
-		time.Sleep(1 * time.Second)
-	}
+	iterateOverOutput(ouputRoad2ch, 1*time.Second)
 }
 
 func outputRoad3(wg *sync.WaitGroup) {
 	defer wg.Done()
-	for car := range ouputRoad3ch {
-		fmt.Println(fmt.Sprintf("Car [%d] drove ouf third exit", car))
-		time.Sleep(1 * time.Hour)
-	}
+	iterateOverOutput(ouputRoad3ch, 1*time.Hour)
 }
 
 func outputRoad4(wg *sync.WaitGroup) {
 	defer wg.Done()
-	for car := range ouputRoad4ch {
-		fmt.Println(fmt.Sprintf("Car [%d] drove ouf fourth exit", car))
-		time.Sleep(100 * time.Millisecond)
+	iterateOverOutput(ouputRoad4ch, 100*time.Millisecond)
+}
+
+func iterateOverOutput(outputRoad chan int, d time.Duration) {
+	for car := range outputRoad {
+		fmt.Println(fmt.Sprintf("Car drove out [%d] exit", car))
+		time.Sleep(d)
 	}
 }
