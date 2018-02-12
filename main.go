@@ -93,92 +93,64 @@ func carDistribution(car int) {
 
 func inputRoad1(circle chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for {
-		cars := random.Intn(5)
-		for i := 0; i <= cars; i++ {
-			inputRoad1Pool = append(inputRoad1Pool, randomRange(1, 4))
-		}
-
-		//We send a car to circle if possible, otherwise skip and generate another set of cars for the next second
-		select {
-		case circle <- inputRoad1Pool[0]:
-			fmt.Println(fmt.Sprintf("Car drove into circle. To drive out on %d exit", inputRoad1Pool[0]))
-			inputRoad1Pool = inputRoad1Pool[1:]
-		default:
-		}
-
-		time.Sleep(1 * time.Second)
-	}
+	processInputRoad(circle, inputRoad1Pool, (time.Duration(random.Intn(5)) * time.Second))
 }
 
 func inputRoad2(circle chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for {
-		inputRoad2Pool = append(inputRoad2Pool, randomRange(1, 4))
-		//We send a car to circle if possible, otherwise skip and generate another set of cars for the next second
-		select {
-		case circle <- inputRoad2Pool[0]:
-			fmt.Println(fmt.Sprintf("Car drove into circle. To drive out on %d exit", inputRoad2Pool[0]))
-			inputRoad2Pool = inputRoad2Pool[1:]
-		default:
-		}
-		time.Sleep(1 * time.Second)
-	}
+	processInputRoad(circle, inputRoad2Pool, 1*time.Second)
 }
 
 func inputRoad3(circle chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for {
-		inputRoad3Pool = append(inputRoad3Pool, randomRange(1, 4))
-		//We send a car to circle if possible, otherwise skip and generate another set of cars for the next second
-		select {
-		case circle <- inputRoad3Pool[0]:
-			fmt.Println(fmt.Sprintf("Car drove into circle. To drive out on %d exit", inputRoad3Pool[0]))
-			inputRoad3Pool = inputRoad3Pool[1:]
-		default:
-		}
-		time.Sleep(2 * time.Second)
-	}
+	processInputRoad(circle, inputRoad3Pool, 2*time.Second)
 }
 
 func inputRoad4(circle chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for {
-		inputRoad4Pool = append(inputRoad4Pool, randomRange(1, 4))
-		//We send a car to circle if possible, otherwise skip and generate another set of cars for the next second
-		select {
-		case circle <- inputRoad4Pool[0]:
-			fmt.Println(fmt.Sprintf("Car drove into circle. To drive out on %d exit", inputRoad4Pool[0]))
-			inputRoad4Pool = inputRoad4Pool[1:]
-		default:
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
+	processInputRoad(circle, inputRoad4Pool, 100*time.Millisecond)
 }
 
 func outputRoad1(wg *sync.WaitGroup) {
 	defer wg.Done()
-	iterateOverOutput(ouputRoad1ch, time.Duration(random.Intn(5))*time.Second)
+	processOutputRoad(ouputRoad1ch, time.Duration(random.Intn(5))*time.Second)
 }
 
 func outputRoad2(wg *sync.WaitGroup) {
 	defer wg.Done()
-	iterateOverOutput(ouputRoad2ch, 1*time.Second)
+	processOutputRoad(ouputRoad2ch, 1*time.Second)
 }
 
 func outputRoad3(wg *sync.WaitGroup) {
 	defer wg.Done()
-	iterateOverOutput(ouputRoad3ch, 1*time.Hour)
+	processOutputRoad(ouputRoad3ch, 1*time.Hour)
 }
 
 func outputRoad4(wg *sync.WaitGroup) {
 	defer wg.Done()
-	iterateOverOutput(ouputRoad4ch, 100*time.Millisecond)
+	processOutputRoad(ouputRoad4ch, 100*time.Millisecond)
 }
 
-func iterateOverOutput(outputRoad chan int, d time.Duration) {
+// =======PROCESSING FUNCTIONS=============
+
+func processOutputRoad(outputRoad chan int, d time.Duration) {
 	for car := range outputRoad {
 		fmt.Println(fmt.Sprintf("Car drove out [%d] exit", car))
+		time.Sleep(d)
+	}
+}
+
+func processInputRoad(circle chan int, inputRoadPool []int, d time.Duration) {
+	for {
+		//random in range to determine what exit to drive
+		inputRoadPool = append(inputRoadPool, randomRange(1, 4))
+		//We send a car to circle if possible, otherwise skip and generate another set of cars for the next second
+		select {
+		case circle <- inputRoadPool[0]:
+			fmt.Println(fmt.Sprintf("Car drove into circle. To drive out on %d exit", inputRoadPool[0]))
+			inputRoadPool = inputRoadPool[1:]
+		default:
+		}
 		time.Sleep(d)
 	}
 }
